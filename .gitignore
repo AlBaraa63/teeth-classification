@@ -1,0 +1,22 @@
+# Model weights (large binary files)
+*.pth
+*.pt
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Data (too large for GitHub)
+data/
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Environment
+venv/
+env/
+.env
