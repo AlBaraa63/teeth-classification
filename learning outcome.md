@@ -123,6 +123,7 @@ teeth-classification/
 │
 ├── 📄 requirements.txt         ← Dependencies
 ├── 📄 README.MD                ← Project overview
+├── 📄 Report                   ← Research Report
 └── 📄 learning outcome.md      ← This file — our journey
 ```
 
