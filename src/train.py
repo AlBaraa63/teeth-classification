@@ -1,5 +1,5 @@
 """
-train.py - IMPROVED VERSION
+train.py
 
 Improvements over original:
 1. More epochs (50 instead of 20)

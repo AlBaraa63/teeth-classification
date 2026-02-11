@@ -73,15 +73,15 @@ This project develops a comprehensive teeth classification solution that can acc
 
 ### Training Curves
 
-![Training History](outputs/training_history2.png)
+![Training History](outputs/figures/training_history2.png)
 
 ### Confusion Matrix
 
-![Confusion Matrix](outputs/confusion_matrix.png)
+![Confusion Matrix](outputs/figures/confusion_matrix.png)
 
 ### Sample Predictions
 
-![Sample Predictions](outputs/sample_predictions.png)
+![Sample Predictions](outputs/figures/sample_predictions.png)
 
 ---
 
@@ -107,7 +107,7 @@ data/
 
 ### Class Distribution
 
-![Class Distribution](outputs/class_distribution.png)
+![Class Distribution](outputs/figures/class_distribution.png)
 
 ### Preprocessing Pipeline
 
@@ -323,18 +323,19 @@ teeth-classification/
 │   └── Testing/
 │
 ├── src/                        # Source code
+│   ├── config.py               # Configuration & constants
 │   ├── dataset.py              # Data loading & augmentation
 │   ├── model.py                # CNN architecture
 │   ├── train.py                # Training loop
 │   └── evaluate.py             # Evaluation & visualization
 │
 ├── outputs/                    # Generated outputs
-│   ├── best_model.pth          # Best model weights
-│   ├── final_model.pth         # Final model weights
-│   ├── training_history.png    # Training curves
-│   ├── confusion_matrix.png    # Confusion matrix
-│   ├── per_class_accuracy.png  # Per-class accuracy
-│   └── sample_predictions.png  # Sample predictions
+│   ├── figures/                # Plots and visualizations
+│   │   ├── training_history.png
+│   │   └── ...
+│   ├── models/                 # Saved models
+│   │   ├── best_model.pth
+│   │   └── final_model.pth
 │
 ├── requirements.txt            # Dependencies
 └── README.md                   # This file

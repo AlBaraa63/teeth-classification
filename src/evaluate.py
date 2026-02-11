@@ -17,9 +17,9 @@ import matplotlib.pyplot as plt
 from tqdm import tqdm
 from PIL import Image
 
-# Import our modules
-from dataset import create_dataloaders, denormalize
-from model import TeethClassifierImproved as TeethClassifier
+from . import config
+from .dataset import create_dataloaders, denormalize
+from .model import TeethClassifierImproved as TeethClassifier
 
 
 # ============================================================
@@ -27,24 +27,15 @@ from model import TeethClassifierImproved as TeethClassifier
 # ============================================================
 
 CONFIG = {
-    'data_dir': 'data',
-    'model_path': 'outputs/best_model.pth',
-    'device': 'cuda' if torch.cuda.is_available() else 'cpu',
-    'batch_size': 32,
-    'save_dir': 'outputs',
+    'data_dir': config.DATA_DIR,
+    'model_path': os.path.join(config.MODELS_DIR, 'best_model.pth'),
+    'device': config.DEVICE,
+    'batch_size': config.BATCH_SIZE,
+    'save_dir': config.FIGURES_DIR, # Saving plots to outputs/figures/
 }
 
-CLASS_NAMES = ['CaS', 'CoS', 'Gum', 'MC', 'OC', 'OLP', 'OT']
-
-CLASS_FULL_NAMES = {
-    'CaS': 'Calculus (Tartar)',
-    'CoS': 'Caries (Cavities)',
-    'Gum': 'Gum Disease',
-    'MC': 'Mouth Cancer',
-    'OC': 'Oral Candidiasis',
-    'OLP': 'Oral Lichen Planus',
-    'OT': 'Oral Trauma'
-}
+CLASS_NAMES = config.CLASSES
+CLASS_FULL_NAMES = config.CLASS_FULL_NAMES
 
 
 # ============================================================
@@ -138,7 +129,9 @@ def calculate_metrics(predictions, labels, class_names):
 # CONFUSION MATRIX
 # ============================================================
 
-def plot_confusion_matrix(predictions, labels, class_names, save_path='outputs/confusion_matrix.png'):
+def plot_confusion_matrix(predictions, labels, class_names, save_path=None):
+    if save_path is None:
+        save_path = os.path.join(CONFIG['save_dir'], 'confusion_matrix.png')
     """
     Create and plot a confusion matrix.
     
@@ -211,7 +204,9 @@ def plot_confusion_matrix(predictions, labels, class_names, save_path='outputs/c
 # PER-CLASS ACCURACY
 # ============================================================
 
-def plot_per_class_accuracy(class_correct, class_total, save_path='outputs/per_class_accuracy.png'):
+def plot_per_class_accuracy(class_correct, class_total, save_path=None):
+    if save_path is None:
+        save_path = os.path.join(CONFIG['save_dir'], 'per_class_accuracy.png')
     """
     Plot accuracy for each class.
     """
@@ -262,7 +257,9 @@ def plot_per_class_accuracy(class_correct, class_total, save_path='outputs/per_c
 # ============================================================
 
 def show_sample_predictions(model, dataloader, class_names, device, 
-                            num_samples=12, save_path='outputs/sample_predictions.png'):
+                            num_samples=12, save_path=None):
+    if save_path is None:
+        save_path = os.path.join(CONFIG['save_dir'], 'sample_predictions.png')
     """
     Show sample predictions with images.
     

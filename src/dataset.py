@@ -20,16 +20,17 @@ import matplotlib.pyplot as plt
 
 
 # === CONFIGURATION ===
-IMAGE_SIZE = 224  # Standard size (AlexNet/ResNet used this)
-BATCH_SIZE = 32   # Number of images processed together
-NUM_WORKERS = 4   # Parallel data loading (set to 0 if you get errors)
+from . import config
+
+# === CONFIGURATION ===
+# Using constants from config.py
+IMAGE_SIZE = config.IMAGE_SIZE
+BATCH_SIZE = config.BATCH_SIZE
+NUM_WORKERS = config.NUM_WORKERS
 
 # ImageNet statistics (used for normalization)
-# WHY THESE NUMBERS? These are the mean and std of ImageNet dataset.
-# Using them helps because pretrained models expect this normalization.
-# Even training from scratch, it's a good starting point.
-IMAGENET_MEAN = [0.485, 0.456, 0.406]
-IMAGENET_STD = [0.229, 0.224, 0.225]
+IMAGENET_MEAN = config.IMAGENET_MEAN
+IMAGENET_STD = config.IMAGENET_STD
 
 
 def get_train_transforms():
@@ -245,11 +246,14 @@ def visualize_augmentations(data_dir, class_name="MC", num_versions=5):
     plt.suptitle(f"Data Augmentation Visualization - Class: {class_name}", fontsize=14)
     plt.tight_layout()
     
-    os.makedirs("outputs", exist_ok=True)
-    plt.savefig("outputs/augmentation_comparison.png", dpi=150)
+    plt.tight_layout()
+    
+    # Save to figures directory
+    save_path = os.path.join(config.FIGURES_DIR, "augmentation_comparison.png")
+    plt.savefig(save_path, dpi=150)
     plt.show()
     
-    print("✓ Saved to outputs/augmentation_comparison.png")
+    print(f"✓ Saved to {save_path}")
 
 
 # === MAIN EXECUTION ===
@@ -258,7 +262,7 @@ if __name__ == "__main__":
     print("STEP 2: PREPROCESSING & AUGMENTATION")
     print("=" * 50)
     
-    DATA_DIR = "data"  # Adjust this path
+    DATA_DIR = config.DATA_DIR
     
     # Visualize augmentations
     print("\n🖼️ Visualizing augmentations...")
