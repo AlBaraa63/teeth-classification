@@ -231,7 +231,7 @@ Output
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/yourusername/teeth-classification.git
+git clone https://github.com/AlBaraa63/teeth-classification.git
 cd teeth-classification
 ```
 
