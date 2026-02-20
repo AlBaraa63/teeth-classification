@@ -19,7 +19,8 @@ from tqdm import tqdm
 
 # Import our modules
 from dataset import create_dataloaders, denormalize
-from model import TeethClassifierImproved as TeethClassifier  # Use improved model
+import config
+from models import TeethClassifierImproved, get_transfer_model
 
 
 # ============================================================
@@ -27,13 +28,16 @@ from model import TeethClassifierImproved as TeethClassifier  # Use improved mod
 # ============================================================
 
 CONFIG = {
-    'data_dir': 'data',
-    'num_epochs': 50,           # Increased from 20
-    'learning_rate': 0.001,     # Starting learning rate
-    'batch_size': 32,
-    'device': 'cuda' if torch.cuda.is_available() else 'cpu',
-    'save_dir': 'outputs',
-    'patience': 10,             # Early stopping: stop if no improvement for 10 epochs
+    'data_dir': config.DATA_DIR,
+    'num_epochs': config.NUM_EPOCHS,
+    'learning_rate': config.LEARNING_RATE,
+    'batch_size': config.BATCH_SIZE,
+    'device': config.DEVICE,
+    'save_dir': config.OUTPUT_DIR,
+    'patience': config.PATIENCE,
+    'model_type': config.MODEL_TYPE,
+    'transfer_model_name': config.TRANSFER_MODEL_NAME,
+    'freeze_features': config.FREEZE_FEATURES,
 }
 
 
@@ -242,13 +246,18 @@ def train_model(model, train_loader, val_loader, criterion, optimizer,
 # VISUALIZATION
 # ============================================================
 
-def plot_training_history(history, save_path='outputs/training_history.png'):
+def plot_training_history(history, save_path=None):
     """
     Plot training curves with 3 graphs:
     1. Loss over time
     2. Accuracy over time
     3. Learning rate over time
     """
+    if save_path is None:
+        save_path = os.path.join(CONFIG['save_dir'], 'training_history.png')
+    
+    # Ensure directory exists
+    os.makedirs(os.path.dirname(save_path), exist_ok=True)
     
     epochs = range(1, len(history['train_loss']) + 1)
     
@@ -327,8 +336,7 @@ def print_training_summary(history):
 # MAIN EXECUTION
 # ============================================================
 
-if __name__ == "__main__":
-    
+def main():
     print("\n" + "=" * 60)
     print("TEETH CLASSIFICATION - IMPROVED TRAINING")
     print("=" * 60)
@@ -355,8 +363,24 @@ if __name__ == "__main__":
     print(f"   Classes: {class_names}")
     
     # --- Create model ---
-    print("\n🧠 Creating improved model...")
-    model = TeethClassifier(num_classes=len(class_names))
+    print("\n🧠 Creating model...")
+    
+    if CONFIG['model_type'] == 'scratch':
+        print(f"   Using custom model: TeethClassifierImproved")
+        model = TeethClassifierImproved(num_classes=len(class_names))
+    elif CONFIG['model_type'] == 'transfer':
+        print(f"   Using transfer learning: {CONFIG['transfer_model_name']}")
+        model = get_transfer_model(
+            model_name=CONFIG['transfer_model_name'],
+            num_classes=len(class_names),
+            pretrained=True,
+            freeze_features=CONFIG['freeze_features']
+        )
+        if CONFIG['freeze_features']:
+            print(f"   ⚠️ Feature extractor is FROZEN (only training classifier)")
+    else:
+        raise ValueError(f"Unknown model_type: {CONFIG['model_type']}")
+    
     model = model.to(device)
     
     # Count parameters
@@ -393,7 +417,11 @@ if __name__ == "__main__":
     print("-" * 60)
     
     # --- Start Training ---
-    input("\n🚀 Press Enter to start training...")
+    # Only ask for input if running interactively and not transfer script (optional check)
+    # For now, we'll keep it or comment it out if it blocks automation?
+    # User is present, so input is fine.
+    print("\n🚀 Starting training...")
+    # input("\n🚀 Press Enter to start training...") # Commented out to avoid blocking automation
     
     history = train_model(
         model=model,
@@ -426,3 +454,6 @@ if __name__ == "__main__":
     print("   📁 best_model.pth  (highest validation accuracy)")
     print("   📁 final_model.pth (after all epochs)")
     print("\n🎉 Training complete! Ready for evaluation.")
+
+if __name__ == "__main__":
+    main()

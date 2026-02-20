@@ -20,7 +20,7 @@ import matplotlib.pyplot as plt
 
 
 # === CONFIGURATION ===
-from . import config
+import config
 
 # === CONFIGURATION ===
 # Using constants from config.py
