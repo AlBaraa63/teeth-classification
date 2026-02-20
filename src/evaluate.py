@@ -17,9 +17,9 @@ import matplotlib.pyplot as plt
 from tqdm import tqdm
 from PIL import Image
 
-from . import config
-from .dataset import create_dataloaders, denormalize
-from .model import TeethClassifierImproved as TeethClassifier
+import config
+from dataset import create_dataloaders, denormalize
+from models import TeethClassifierImproved, get_transfer_model
 
 
 # ============================================================
@@ -42,14 +42,24 @@ CLASS_FULL_NAMES = config.CLASS_FULL_NAMES
 # LOAD MODEL
 # ============================================================
 
-def load_model(model_path, num_classes, device):
+def load_model(model_path, num_classes, device, model_type='scratch', transfer_model_name='resnet18'):
     """
     Load a trained model from checkpoint.
     """
     print(f"📂 Loading model from: {model_path}")
     
-    # Create model architecture
-    model = TeethClassifier(num_classes=num_classes)
+    # Create model architecture based on type
+    if model_type == 'scratch':
+        model = TeethClassifierImproved(num_classes=num_classes)
+    elif model_type == 'transfer':
+        model = get_transfer_model(
+            model_name=transfer_model_name,
+            num_classes=num_classes,
+            pretrained=False,  # We'll load our trained weights
+            freeze_features=False
+        )
+    else:
+        raise ValueError(f"Unknown model_type: {model_type}")
     
     # Load trained weights
     checkpoint = torch.load(model_path, map_location=device)
@@ -395,7 +405,13 @@ if __name__ == "__main__":
     
     # --- Load Model ---
     print("\n🧠 Loading trained model...")
-    model = load_model(CONFIG['model_path'], num_classes=len(class_names), device=device)
+    model = load_model(
+        CONFIG['model_path'],
+        num_classes=len(class_names),
+        device=device,
+        model_type=config.MODEL_TYPE,
+        transfer_model_name=config.TRANSFER_MODEL_NAME
+    )
     
     # --- Evaluate ---
     print("\n📊 Evaluating on test set...")

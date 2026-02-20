@@ -73,3 +73,14 @@ LEARNING_RATE = 0.001
 NUM_EPOCHS = 50
 PATIENCE = 10  # Early stopping patience
 DROPOUT_RATE = 0.5
+
+# ============================================================
+# MODEL SELECTION
+# ============================================================
+
+# Model type: 'scratch' (custom CNN) or 'transfer' (pre-trained)
+MODEL_TYPE = 'scratch'  # Options: 'scratch', 'transfer'
+
+# For transfer learning models
+TRANSFER_MODEL_NAME = 'resnet18'  # Options: 'resnet18', 'resnet50', 'efficientnet_b0'
+FREEZE_FEATURES = True  # Freeze feature extractor (only train classifier)
