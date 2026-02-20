@@ -45,6 +45,7 @@ def load_model():
         
 
         paths = [
+            "outputs/inference_model.pth",      # Optimized model for deployment
             os.path.join(config.MODELS_DIR, "best_model.pth"),
             os.path.join(config.OUTPUT_DIR, "best_model.pth"),
             "best_model.pth",
